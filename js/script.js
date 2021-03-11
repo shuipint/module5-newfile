@@ -91,15 +91,58 @@ $ajaxUtils.sendGetRequest(
 });
 // *** finish **
 
-
-// Builds HTML for the home page based on categories array
-// returned from the server.
-function buildAndShowHomeHTML (categories) {
-
-  // Load home snippet page
+//step2
+function buildAndShowCategoriesHTML (categories) {
+  // Load title snippet of categories page
   $ajaxUtils.sendGetRequest(
     categoriesTitleHtml,
-    function (homeHtml) {
+    function (categoriesTitleHtml) {
+      // Retrieve single category snippet
+      $ajaxUtils.sendGetRequest(
+        categoryHtml,
+        function (categoryHtml) {
+          // Switch CSS class active to menu button
+          switchMenuToActive();
+
+          var categoriesViewHtml =
+            buildCategoriesViewHtml(categories,
+                                    categoriesTitleHtml,
+                                    categoryHtml);
+          insertHtml("#main-content", categoriesViewHtml);
+        },
+        false);
+    },
+    false);
+}
+  
+  // Using categories data and snippets html
+// build categories view HTML to be inserted into page
+function buildCategoriesViewHtml(categories,
+                                 categoriesTitleHtml,
+                                 categoryHtml) {
+
+  var finalHtml = categoriesTitleHtml;
+  finalHtml += "<section class='row'>";
+
+  // Loop over categories
+  for (var i = 0; i < categories.length; i++) {
+    // Insert category values
+    var html = categoryHtml;
+    var name = "" + categories[i].name;
+    var short_name = categories[i].short_name;
+    html =
+      insertProperty(html, "name", name);
+    html =
+      insertProperty(html,
+                     "short_name",
+                     short_name);
+    finalHtml += html;
+  }
+
+  finalHtml += "</section>";
+  return finalHtml;
+}
+
 
       // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
       // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
@@ -125,10 +168,32 @@ function buildAndShowHomeHTML (categories) {
       // Use the existing insertHtml function for that purpose. Look through this code for an example
       // of how to do that.
       // ....
+  
+  // Builds HTML for the single category page based on the data
+// from the server
+function buildAndShowMenuItemsHTML (categoryMenuItems) {
+  // Load title snippet of menu items page
+  $ajaxUtils.sendGetRequest(
+    menuItemsTitleHtml,
+    function (menuItemsTitleHtml) {
+      // Retrieve single menu item snippet
+      $ajaxUtils.sendGetRequest(
+        menuItemHtml,
+        function (menuItemHtml) {
+          // Switch CSS class active to menu button
+          switchMenuToActive();
 
+          var menuItemsViewHtml =
+            buildMenuItemsViewHtml(categoryMenuItems,
+                                   menuItemsTitleHtml,
+                                   menuItemHtml);
+          insertHtml("#main-content", menuItemsViewHtml);
+        },
+        false); //process as regular string and not jason
     },
     false); // False here because we are getting just regular HTML from the server, so no need to process JSON.
 }
+
 
 
 // Given array of category objects, returns a random category object.
@@ -160,86 +225,10 @@ dc.loadMenuItems = function (categoryShort) {
 };
 
 
-// Builds HTML for the categories page based on the data
-// from the server
-function buildAndShowCategoriesHTML (categories) {
-  // Load title snippet of categories page
-  $ajaxUtils.sendGetRequest(
-    categoriesTitleHtml,
-    function (categoriesTitleHtml) {
-      // Retrieve single category snippet
-      $ajaxUtils.sendGetRequest(
-        categoryHtml,
-        function (categoryHtml) {
-          // Switch CSS class active to menu button
-          switchMenuToActive();
-
-          var categoriesViewHtml =
-            buildCategoriesViewHtml(categories,
-                                    categoriesTitleHtml,
-                                    categoryHtml);
-          insertHtml("#main-content", categoriesViewHtml);
-        },
-        false);
-    },
-    false);
-}
-
-
-// Using categories data and snippets html
-// build categories view HTML to be inserted into page
-function buildCategoriesViewHtml(categories,
-                                 categoriesTitleHtml,
-                                 categoryHtml) {
-
-  var finalHtml = categoriesTitleHtml;
-  finalHtml += "<section class='row'>";
-
-  // Loop over categories
-  for (var i = 0; i < categories.length; i++) {
-    // Insert category values
-    var html = categoryHtml;
-    var name = "" + categories[i].name;
-    var short_name = categories[i].short_name;
-    html =
-      insertProperty(html, "name", name);
-    html =
-      insertProperty(html,
-                     "short_name",
-                     short_name);
-    finalHtml += html;
-  }
-
-  finalHtml += "</section>";
-  return finalHtml;
-}
 
 
 
-// Builds HTML for the single category page based on the data
-// from the server
-function buildAndShowMenuItemsHTML (categoryMenuItems) {
-  // Load title snippet of menu items page
-  $ajaxUtils.sendGetRequest(
-    menuItemsTitleHtml,
-    function (menuItemsTitleHtml) {
-      // Retrieve single menu item snippet
-      $ajaxUtils.sendGetRequest(
-        menuItemHtml,
-        function (menuItemHtml) {
-          // Switch CSS class active to menu button
-          switchMenuToActive();
 
-          var menuItemsViewHtml =
-            buildMenuItemsViewHtml(categoryMenuItems,
-                                   menuItemsTitleHtml,
-                                   menuItemHtml);
-          insertHtml("#main-content", menuItemsViewHtml);
-        },
-        false); //process as regular string and not jason
-    },
-    false);
-}
 
 
 // Using category and menu items data and snippets html
