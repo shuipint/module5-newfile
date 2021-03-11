@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 // On first load, show home view
 showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
-  homeHtmlUrl, //change nema following the name specified above
+  homeHtmlUrl, //change name following the name specified above
   function (responseText) {
     document.querySelector("#main-content")
       .innerHTML = responseText;
